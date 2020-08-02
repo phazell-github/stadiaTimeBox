@@ -10,10 +10,18 @@ import (
 
 func main() {
 	//fire up chrome to stadia
+
+	// fire up a server
+	// - serve page
+	http.Handle("/", http.FileServer(http.Dir(".")))
+	timeLeft := 123
+	http.HandleFunc("/api", getTime(timeLeft))
+
+	// - API to deliver remaining time
+
 	// start a countdown timer
 	ticker := time.NewTicker(1000 * time.Millisecond)
 	done := make(chan bool)
-	timeLeft := 123
 
 	go func() {
 		for {
@@ -27,17 +35,10 @@ func main() {
 		}
 	}()
 
+	serve()
 	time.Sleep(123000 * time.Millisecond)
 	ticker.Stop()
 	done <- true
-
-	// fire up a server
-	// - serve page
-	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("timerPage.html"))))
-	serve()
-
-	// - API to deliver remaining time
-	http.HandleFunc("/api", getTime(timeLeft))
 
 }
 

@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <title>Stadia Timer</title>
   </head>
-  <body>    
-    <h1><span id="minutes"> minutes and </span><span id="seconds"></span> seconds till shutdown....</h1>
+  <body onload="getDeets()">    
+    <h1><span id="minutes"></span> minutes and <span id="seconds"></span> seconds till shutdown....</h1>
   </body>
   <script>
       // AJAX calls to get timeleft 
-        // Js to convert value to minutes and seconds
+      function getDeets() {
+        var xhttp = new XMLHttpRequest();
+        var secondsLeft = 0;
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("oi");
+            console.log(this.responseText);
+            secondsLeft = this.responseText;
+
+            var minutes = Math.floor(secondsLeft/60);
+            var seconds = secondsLeft - (minutes * 60);
+
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
+          }
+        };
+        var api = location.href + "/api";
+        xhttp.open("GET", api, true);
+        xhttp.send();
+      }
   </script>
 </html>

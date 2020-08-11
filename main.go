@@ -15,7 +15,7 @@ func main() {
 	// - serve page
 	http.Handle("/", http.FileServer(http.Dir(".")))
 	timeLeft := 123
-	http.HandleFunc("/api", getTime(timeLeft))
+	http.HandleFunc("/api", getTime(&timeLeft))
 
 	// - API to deliver remaining time
 
@@ -42,11 +42,11 @@ func main() {
 
 }
 
-func getTime(time int) func(http.ResponseWriter, *http.Request) {
+func getTime(time *int) func(http.ResponseWriter, *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Write([]byte(strconv.Itoa(time)))
+		w.Write([]byte(strconv.Itoa(*time)))
 	}
 
 }

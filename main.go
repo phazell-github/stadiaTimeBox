@@ -11,12 +11,14 @@ import (
 func main() {
 	//fire up chrome to stadia
 	cmd := exec.Command("google-chrome", "https://stadia.google.com/home")
-	cmd.Run()
+	go cmd.Run()
+
+	timeLeft := 5400
 
 	// fire up a server
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	timeLeft := 5400
 	http.HandleFunc("/api", getTime(&timeLeft))
+	go serve()
 
 	// start a countdown timer
 	ticker := time.NewTicker(1000 * time.Millisecond)
@@ -33,13 +35,13 @@ func main() {
 		}
 	}()
 
-	serve()
-	time.Sleep(5400000 * time.Millisecond)
+	time.Sleep(5400 * time.Second)
 	ticker.Stop()
 	done <- true
 
 	// shutdown stadia
-
+	funsOver := exec.Command("killall", "chrome")
+	funsOver.Run()
 }
 
 func getTime(time *int) func(http.ResponseWriter, *http.Request) {
